@@ -1,4 +1,4 @@
-# Regenerate: Vi (Version One) - EarthAI x ClimateImpact Hackathon
+# Regenerate - EarthAI x ClimateImpact Hackathon
 
 Welcome to the repository for **Regenerate**, this project was developed over 24hrs during the EarthAI x ClimateImpact summit Hackathon at The Royal Institution.
 
