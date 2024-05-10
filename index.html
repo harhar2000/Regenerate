@@ -21,103 +21,110 @@
 <body>
 <div id="map"></div>
 <script>
-	mapboxgl.accessToken = 'pk.eyJ1IjoiaGFycnktMTIzNCIsImEiOiJjbHZ4cHZodmEwMmRlMmtxeW1xZno5NGY1In0.5BmmZzl8o0ZvnNEJ5rJnqQ';
-    const map = new mapboxgl.Map({
-        container: 'map',
-        style: 'mapbox://styles/mapbox/streets-v9',
-        projection: 'globe', 
-        center: [-54.0000, -14.2350],
-        zoom: 2
-    });
+    // Fetch the access token from the server
+    fetch('/.mapboxgl_token')
+    .then(response => response.text())
+    .then(token => {
+        // Set the Mapbox access token
+        mapboxgl.accessToken = token;
+        
+        // Initialize the map with the access token
+        const map = new mapboxgl.Map({
+            container: 'map',
+            style: `https://api.mapbox.com/styles/v1/mapbox/streets-v9?access_token=${token}`,
+            projection: 'globe', 
+            center: [-54.0000, -14.2350],
+            zoom: 2
+        });
 
-    map.addControl(new mapboxgl.NavigationControl());
-    map.scrollZoom.disable();
-    const BRAZIL_BOUNDS = { minLat: -25.0, maxLat: 1.2, minLng: -69.0, maxLng: -40.8 };
+            map.addControl(new mapboxgl.NavigationControl());
+            map.scrollZoom.disable();
+            const BRAZIL_BOUNDS = { minLat: -25.0, maxLat: 1.2, minLng: -69.0, maxLng: -40.8 };
 
-    function getRandomCoords() {
-        let coords;
-        do {
-            coords = {
-                latitude: Math.random() * (BRAZIL_BOUNDS.maxLat - BRAZIL_BOUNDS.minLat) + BRAZIL_BOUNDS.minLat,
-                longitude: Math.random() * (BRAZIL_BOUNDS.maxLng - BRAZIL_BOUNDS.minLng) + BRAZIL_BOUNDS.minLng
-            };
-        } while (!mapboxgl.LngLatBounds.convert([BRAZIL_BOUNDS.minLng, BRAZIL_BOUNDS.minLat, BRAZIL_BOUNDS.maxLng, BRAZIL_BOUNDS.maxLat]).contains(new mapboxgl.LngLat(coords.longitude, coords.latitude)));
-        return coords;
-    }
-
-function loadData() {
-    Papa.parse("/BRA/ABOUT_THE_DATA/data_transaction_log.csv", {
-        download: true,
-        header: true,
-        dynamicTyping: true,
-        complete: function(results) {
-            console.log("Parsed CSV Data:", results.data); 
-            plotData(results.data);
-        }
-    });
-}
-
-function plotData(data) {
-        data.forEach(item => {
-            const { latitude, longitude } = getRandomCoords();
-            const el = document.createElement('div');
-            el.className = 'small-marker';
-
-            const marker = new mapboxgl.Marker(el)
-                .setLngLat([longitude, latitude])
-                .addTo(map);
-
-            if (item.original_inventory_sector && item.emissions_quantity_2023_release && item.emissions_quantity_2022_release && item.difference && item.percent_difference) {
-                const popupContent = `
-                    <h3>${item.original_inventory_sector}</h3>
-                    <p><strong>Emission Quantity 2023 Release:</strong> ${item.emissions_quantity_2023_release}</p>
-                    <p><strong>Emission Quantity 2022 Release:</strong> ${item.emissions_quantity_2022_release}</p>
-                    <p><strong>Difference:</strong> ${item.difference}</p>
-                    <p><strong>Percentage Difference:</strong> ${item.percent_difference}%</p>
-                `;
-                marker.setPopup(new mapboxgl.Popup({ offset: 25 }).setHTML(popupContent));
-            } else {
-                marker.setPopup(new mapboxgl.Popup({ offset: 25 }).setHTML('<h3>Information Not Available</h3>'));
+            function getRandomCoords() {
+                let coords;
+                do {
+                    coords = {
+                        latitude: Math.random() * (BRAZIL_BOUNDS.maxLat - BRAZIL_BOUNDS.minLat) + BRAZIL_BOUNDS.minLat,
+                        longitude: Math.random() * (BRAZIL_BOUNDS.maxLng - BRAZIL_BOUNDS.minLng) + BRAZIL_BOUNDS.minLng
+                    };
+                } while (!mapboxgl.LngLatBounds.convert([BRAZIL_BOUNDS.minLng, BRAZIL_BOUNDS.minLat, BRAZIL_BOUNDS.maxLng, BRAZIL_BOUNDS.maxLat]).contains(new mapboxgl.LngLat(coords.longitude, coords.latitude)));
+                return coords;
             }
-        }); 
-    }
 
-    map.on('style.load', () => {
-        map.setFog({});
-        loadData(); // Load CSV data after map style is fully loaded
-    });
-
-
-    // The following values can be changed to control rotation speed:
-    let userInteracting = false;
-    const spinEnabled = true;
-    const secondsPerRevolution = 240;
-    const maxSpinZoom = 5;
-    const slowSpinZoom = 3;
-
-    function spinGlobe() {
-        const zoom = map.getZoom();
-        if (spinEnabled && !userInteracting && zoom < maxSpinZoom) {
-            let distancePerSecond = 360 / secondsPerRevolution;
-            if (zoom > slowSpinZoom) {
-                // Slow spinning at higher zooms
-                const zoomDif = (maxSpinZoom - zoom) / (maxSpinZoom - slowSpinZoom);
-                distancePerSecond *= zoomDif;
+            function loadData() {
+                Papa.parse("/data_transaction_log.csv", {
+                    download: true,
+                    header: true,
+                    dynamicTyping: true,
+                    complete: function(results) {
+                        console.log("Parsed CSV Data:", results.data); 
+                        plotData(results.data);
+                    }
+                });
             }
-            const center = map.getCenter();
-            center.lng -= distancePerSecond;
-            // Smoothly animate the map over one second.
-            // When this animation is complete, it calls a 'moveend' event.
-            map.easeTo({ center, duration: 1000, easing: (n) => n });
-        }
-    }
 
-    map.on('mousedown', () => { userInteracting = true; });
-    map.on('dragstart', () => { userInteracting = true; });
-    map.on('moveend', () => { if (!userInteracting) spinGlobe(); });
-    function spinGlobe() {
-    }
-    spinGlobe();
+            function plotData(data) {
+                data.forEach(item => {
+                    const { latitude, longitude } = getRandomCoords();
+                    const el = document.createElement('div');
+                    el.className = 'small-marker';
+
+                    const marker = new mapboxgl.Marker(el)
+                        .setLngLat([longitude, latitude])
+                        .addTo(map);
+
+                    if (item.original_inventory_sector && item.emissions_quantity_2023_release && item.emissions_quantity_2022_release && item.difference && item.percent_difference) {
+                        const popupContent = `
+                            <h3>${item.original_inventory_sector}</h3>
+                            <p><strong>Emission Quantity 2023 Release:</strong> ${item.emissions_quantity_2023_release}</p>
+                            <p><strong>Emission Quantity 2022 Release:</strong> ${item.emissions_quantity_2022_release}</p>
+                            <p><strong>Difference:</strong> ${item.difference}</p>
+                            <p><strong>Percentage Difference:</strong> ${item.percent_difference}%</p>
+                        `;
+                        marker.setPopup(new mapboxgl.Popup({ offset: 25 }).setHTML(popupContent));
+                    } else {
+                        marker.setPopup(new mapboxgl.Popup({ offset: 25 }).setHTML('<h3>Information Not Available</h3>'));
+                    }
+                }); 
+            }
+
+            map.on('style.load', () => {
+                map.setFog({});
+                loadData(); // Load CSV data after map style is fully loaded
+            });
+
+            // The following values can be changed to control rotation speed:
+            let userInteracting = false;
+            const spinEnabled = true;
+            const secondsPerRevolution = 240;
+            const maxSpinZoom = 5;
+            const slowSpinZoom = 3;
+
+            function spinGlobe() {
+                const zoom = map.getZoom();
+                if (spinEnabled && !userInteracting && zoom < maxSpinZoom) {
+                    let distancePerSecond = 360 / secondsPerRevolution;
+                    if (zoom > slowSpinZoom) {
+                        // Slow spinning at higher zooms
+                        const zoomDif = (maxSpinZoom - zoom) / (maxSpinZoom - slowSpinZoom);
+                        distancePerSecond *= zoomDif;
+                    }
+                    const center = map.getCenter();
+                    center.lng -= distancePerSecond;
+                    // Smoothly animate the map over one second.
+                    // When this animation is complete, it calls a 'moveend' event.
+                    map.easeTo({ center, duration: 1000, easing: (n) => n });
+                }
+            }
+
+            map.on('mousedown', () => { userInteracting = true; });
+            map.on('dragstart', () => { userInteracting = true; });
+            map.on('moveend', () => { if (!userInteracting) spinGlobe(); });
+            function spinGlobe() {
+            }
+            spinGlobe();
+        });
 </script>
 </body>
 </html>
