@@ -65,11 +65,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-# Case study is tree project offset, with our model we're displaying it's degenerative
-
-
-# Tick in real time
-# More credits you buy the more Doomsday Clock goes down 
-# Button to buy credit and you see clock decrease
