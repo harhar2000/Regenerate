@@ -20,6 +20,10 @@ Given we had 24 hours to bring our idea to fruition, we decided to distill our o
 - **Direct Contribution**: Users can contribute directly by participating in projects and earning credits, verified by AI modelling, satellite technology, and peer-to-peer validations.
 - **Incentivising Individual and Corporate Action**: Our approach incentivises individual action and propels companies towards positive competition, creating a transparent, accountable platform for global change.
 
+<img src="images/photo1.png" alt="Interactive Globe with controls" width="300"/>
+<img src="images/photo2.png" alt="Zoomed in on Brazil. See datapoints" width="300"/>
+<img src="images/photo3.png" alt="Geographically linked carbon data" width="300"/>
+
 ## Achievements
 **Regenerate** secured 2nd place for the most ambitious project at the EarthAI Hackathon!
 
