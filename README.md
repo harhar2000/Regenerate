@@ -21,10 +21,9 @@ Given we had 24 hours to bring our idea to fruition, we decided to distill our o
 - **Incentivising Individual and Corporate Action**: Our approach incentivises individual action and propels companies towards positive competition, creating a transparent, accountable platform for global change.
 
 ![Interactive Globe with controls](images/image.jpg)
-<p align="center">
-  <img src="images/image2.jpg" alt="Zoomed in on Brazil. See datapoints" width="45%"/>
-  <img src="images/image3.jpg" alt="Geographically linked carbon data" width="45%"/>
-</p>
+<img src="images/image2.jpg" alt="Zoomed in on Brazil. See datapoints" width="45%" style="margin-right: 10px;"/>
+<img src="images/image3.jpg" alt="Geographically linked carbon data" width="45%"/>
+
 
 ## Achievements
 **Regenerate** secured 2nd place for the most ambitious project at the EarthAI Hackathon!
